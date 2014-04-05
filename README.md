@@ -53,5 +53,5 @@ filter(it, function () {
 
 MIT
 
-[min-iterator]: 
-[live-list]: 
+[min-iterator]: https://github.com/mantoni/min-iterator.js
+[live-list]: https://github.com/mantoni/live-list.js
