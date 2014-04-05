@@ -174,4 +174,18 @@ describe('filter', function () {
     assert.equal(e.message, 'oups!');
   });
 
+  it('invokes filter functions with given scope', function () {
+    var it = iterator([function (next) {
+      calls.push(this);
+      next();
+    }, function () {
+      calls.push(this);
+    }]);
+    var scope = {};
+
+    filter(it, scope);
+
+    assert.deepEqual(calls, [scope, scope]);
+  });
+
 });
