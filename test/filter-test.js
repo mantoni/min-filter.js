@@ -188,4 +188,37 @@ describe('filter', function () {
     assert.deepEqual(calls, [scope, scope]);
   });
 
+  it('passes callback error back', function () {
+    var e = new Error('oups!');
+    var it = iterator([function (next) {
+      next(function (err) {
+        calls.push(err);
+      });
+    }, function (next, callback) {
+      /*jslint unparam: true*/
+      callback(e);
+    }]);
+
+    filter(it);
+
+    assert.deepEqual(calls, [e]);
+  });
+
+  it('passes callback value back', function () {
+    var v = 'some value';
+    var it = iterator([function (next) {
+      next(function (err, value) {
+        /*jslint unparam: true*/
+        calls.push(value);
+      });
+    }, function (next, callback) {
+      /*jslint unparam: true*/
+      callback(null, v);
+    }]);
+
+    filter(it);
+
+    assert.deepEqual(calls, [v]);
+  });
+
 });
