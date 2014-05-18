@@ -204,8 +204,7 @@ describe('filter', function () {
     assert.deepEqual(calls, [e]);
   });
 
-  it('passes callback value back', function () {
-    var v = 'some value';
+  it('passes callback value to previous filter', function () {
     var it = iterator([function (next) {
       next(function (err, value) {
         /*jslint unparam: true*/
@@ -213,12 +212,44 @@ describe('filter', function () {
       });
     }, function (next, callback) {
       /*jslint unparam: true*/
-      callback(null, v);
+      callback(null, 'some value');
     }]);
 
     filter(it);
 
-    assert.deepEqual(calls, [v]);
+    assert.deepEqual(calls, ['some value']);
+  });
+
+  it('returns callback value from first filter', function () {
+    var it = iterator([function (next, callback) {
+      next(function () {
+        callback(null, 'some value');
+      });
+    }, function (next) {
+      next();
+    }]);
+
+    filter(it, function (err, v) {
+      /*jslint unparam: true*/
+      assert.equal(v, 'some value');
+    });
+
+  });
+
+  it('returns callback value from second filter', function () {
+    var it = iterator([function (next) {
+      next();
+    }, function (next, callback) {
+      next(function () {
+        callback(null, 'some value');
+      });
+    }]);
+
+    filter(it, function (err, v) {
+      /*jslint unparam: true*/
+      assert.equal(v, 'some value');
+    });
+
   });
 
 });
