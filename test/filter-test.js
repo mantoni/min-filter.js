@@ -296,9 +296,7 @@ describe('filter', function () {
 
   it('passes done function to 2nd argument', function () {
     var it = iterator([]);
-    var done = function () {
-      return;
-    };
+    var done = adds(0);
 
     var cb;
     filter(it, function (callback) {
@@ -310,9 +308,7 @@ describe('filter', function () {
 
   it('passes done function to 3rd argument with correct scope', function () {
     var it = iterator([]);
-    var done = function () {
-      return;
-    };
+    var done = adds(0);
     var scope = {};
 
     var cb;
