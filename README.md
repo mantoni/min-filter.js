@@ -12,11 +12,6 @@ Repository: <https://github.com/mantoni/min-filter.js>
 npm install min-filter
 ```
 
-## Browser compatibility
-
-To use this module in a browser, download the npm package and then use
-[Browserify](http://browserify.org) to create a standalone version.
-
 ## Usage
 
 The filter operates on a [min-iterator][] implementation. This example uses a
@@ -40,14 +35,38 @@ l.push(function (next, callback) {
 
 var it = l.iterator();
 
-filter(it, function () {
+filter(it, function (err, value) {
   // Done.
 });
 ```
 
 ## API
 
-- `filter(iterator[, scope][, callback])`
+`filter(iterator[, scope][[, then], callback])`
+
+- `iterator`: [min-iterator][] that returns filter functions
+- `scope`: The object to use as `this` in each filter function
+- `then`: A function that is invoked after the last filter called `next`.
+  Receives an optional callback argument. If a callback is given, it triggers
+  execution of the functions passed to `next` by the filters.
+- `callback`: A function that is invoked after all processing of all filters,
+  the done function and all callbacks has finished. Receives an error object as
+  the first argument and any additional arguments passed back by the callbacks.
+
+Valid argument combinations:
+
+- `filter(it, callback)`: Invokes filters, then `callback`
+- `filter(it, then, callback)`: Invokes filters, calls `then` after last
+  filter called `next`, then invokes `callback`
+- `filter(it, scope, callback)`: Invokes filters with given scope, then invokes
+  `callback`
+- `filter(it, scope, then, callback)`: Invokes filters with given scope, calls
+  `then` after last filter called `next`, then invokes `callback`
+
+## Browser compatibility
+
+To use this module in a browser, download the npm package and then use
+[Browserify](http://browserify.org) to create a standalone version.
 
 ## License
 
