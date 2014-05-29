@@ -233,7 +233,6 @@ describe('filter', function () {
       /*jslint unparam: true*/
       assert.equal(v, 'some value');
     });
-
   });
 
   it('returns callback value from second filter', function () {
@@ -249,7 +248,96 @@ describe('filter', function () {
       /*jslint unparam: true*/
       assert.equal(v, 'some value');
     });
+  });
 
+  it('uses 4th argument as callback if 3rd is null', function () {
+    var it = iterator([]);
+
+    filter(it, null, null, adds(1));
+
+    assert.deepEqual(calls, [1]);
+  });
+
+  it('invokes 2nd argument as last filter', function () {
+    var it = iterator([adds(1)]);
+
+    filter(it, adds(2), adds(3));
+
+    assert.deepEqual(calls, [1, 2, 3]);
+  });
+
+  it('invokes 3rd argument as last filter', function () {
+    var it = iterator([adds(1)]);
+
+    filter(it, null, adds(2), adds(3));
+
+    assert.deepEqual(calls, [1, 2, 3]);
+  });
+
+  it('invokes 3rd argument with correct scope', function (done) {
+    var it = iterator([]);
+    var scope = {};
+
+    filter(it, scope, function () {
+      assert.strictEqual(this, scope);
+    }, done);
+  });
+
+  it('does not invoke done if 2nd agument expects callback', function () {
+    var it = iterator([]);
+
+    filter(it, function (callback) {
+      /*jslint unparam: true*/
+      return;
+    }, adds(1));
+
+    assert.deepEqual(calls, []);
+  });
+
+  it('passes done function to 2nd argument', function () {
+    var it = iterator([]);
+    var done = function () {
+      return;
+    };
+
+    var cb;
+    filter(it, function (callback) {
+      cb = callback;
+    }, done);
+
+    assert.strictEqual(cb, done);
+  });
+
+  it('passes done function to 3rd argument with correct scope', function () {
+    var it = iterator([]);
+    var done = function () {
+      return;
+    };
+    var scope = {};
+
+    var cb;
+    var s;
+    filter(it, scope, function (callback) {
+      cb = callback;
+      s = this;
+    }, done);
+
+    assert.strictEqual(cb, done);
+    assert.strictEqual(s, scope);
+  });
+
+  it('invokes callback with error from additional filter', function () {
+    var it = iterator([]);
+    var e = new Error();
+
+    var error;
+    filter(it, function () {
+      throw e;
+    }, function (err) {
+      error = err;
+    });
+
+    assert.strictEqual(error, e);
   });
 
 });
