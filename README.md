@@ -22,15 +22,20 @@ var filter = require('min-filter');
 var List   = require('live-list').List;
 
 var l = new List();
-l.push(function (next) {
-  // Do stuff before the next thing ...
-  next();
+l.push({
+  fn: function (next) {
+    // Do stuff before the next thing ...
+    next();
+  }
 });
-l.push(function (next, callback) {
-  next(function () {
-    // Do stuff on the way back ...
-    callback();
-  });
+l.push({
+  fn: function (next, callback) {
+    next(function () {
+      // Do stuff on the way back ...
+      callback();
+    });
+  },
+  scope: this
 });
 
 var it = l.iterator();
@@ -44,14 +49,21 @@ filter(it, function (err, value) {
 
 `filter(iterator[, scope][[, then], callback])`
 
-- `iterator`: [min-iterator][] that returns filter functions
-- `scope`: The object to use as `this` in each filter function
+- `iterator`: [min-iterator][] that returns objects with filter functions
+- `scope`: The object to use as `this` in each filter function, if not
+  specified otherwise
 - `then`: A function that is invoked after the last filter called `next`.
   Receives an optional callback argument. If a callback is given, it triggers
   execution of the functions passed to `next` by the filters.
 - `callback`: A function that is invoked after all processing of all filters,
   the done function and all callbacks has finished. Receives an error object as
   the first argument and any additional arguments passed back by the callbacks.
+
+Data structure of objects returns by iterator:
+
+- `fn`: The filter function
+- `scope`: The scope to use when invoking the filter function. This overrides
+  the scope passed to `filter`.
 
 Valid argument combinations:
 
