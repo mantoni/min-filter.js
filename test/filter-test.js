@@ -22,6 +22,12 @@ function iterator(arr) {
   };
 }
 
+function fnIterator(arr) {
+  return iterator(arr.map(function (fn) {
+    return { fn : fn };
+  }));
+}
+
 
 describe('filter', function () {
   var calls;
@@ -43,7 +49,7 @@ describe('filter', function () {
   });
 
   it('invokes each function returned by the iterator', function () {
-    var it = iterator([adds(1), adds(2)]);
+    var it = fnIterator([adds(1), adds(2)]);
 
     filter(it);
 
@@ -51,7 +57,7 @@ describe('filter', function () {
   });
 
   it('does not invoke next if filter does not', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       /*jslint unparam: true*/
       calls.push(1);
     }, adds(2)]);
@@ -62,7 +68,7 @@ describe('filter', function () {
   });
 
   it('invokes next if filter invokes next', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       next();
     }, adds(1)]);
 
@@ -72,7 +78,7 @@ describe('filter', function () {
   });
 
   it('invokes callback passed to next', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       next(adds(1));
     }]);
 
@@ -82,7 +88,7 @@ describe('filter', function () {
   });
 
   it('does not invoke previous callback if filter does not', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       next(adds(1));
     }, function (next, callback) {
       /*jslint unparam: true*/
@@ -96,7 +102,7 @@ describe('filter', function () {
   });
 
   it('does invoke previous callback if filter invokes callback', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       next(adds(1));
     }, function (next, callback) {
       next(adds(2));
@@ -109,7 +115,7 @@ describe('filter', function () {
   });
 
   it('invokes callback for empty iterator', function () {
-    var it = iterator([]);
+    var it = fnIterator([]);
 
     filter(it, adds(1));
 
@@ -117,7 +123,7 @@ describe('filter', function () {
   });
 
   it('invokes callback for simple filter', function () {
-    var it = iterator([adds(1)]);
+    var it = fnIterator([adds(1)]);
 
     filter(it, adds(2));
 
@@ -125,7 +131,7 @@ describe('filter', function () {
   });
 
   it('invokes next filter if one throws', function () {
-    var it = iterator([function () {
+    var it = fnIterator([function () {
       throw new Error();
     }, adds(1)]);
 
@@ -136,7 +142,7 @@ describe('filter', function () {
 
   it('passes thrown error to callback', function () {
     var e;
-    var it = iterator([function () {
+    var it = fnIterator([function () {
       throw new Error('oups!');
     }]);
 
@@ -149,7 +155,7 @@ describe('filter', function () {
   });
 
   it('invokes next filter if one with next arg throws', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       /*jslint unparam: true*/
       throw new Error();
     }, adds(1)]);
@@ -161,7 +167,7 @@ describe('filter', function () {
 
   it('passes thrown error from filter with next arg to callback', function () {
     var e;
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       /*jslint unparam: true*/
       throw new Error('oups!');
     }]);
@@ -175,7 +181,7 @@ describe('filter', function () {
   });
 
   it('invokes filter functions with given scope', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       calls.push(this);
       next();
     }, function () {
@@ -190,7 +196,7 @@ describe('filter', function () {
 
   it('passes callback error back', function () {
     var e = new Error('oups!');
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       next(function (err) {
         calls.push(err);
       });
@@ -205,7 +211,7 @@ describe('filter', function () {
   });
 
   it('passes callback value to previous filter', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       next(function (err, value) {
         /*jslint unparam: true*/
         calls.push(value);
@@ -221,7 +227,7 @@ describe('filter', function () {
   });
 
   it('returns callback value from first filter', function () {
-    var it = iterator([function (next, callback) {
+    var it = fnIterator([function (next, callback) {
       next(function () {
         callback(null, 'some value');
       });
@@ -236,7 +242,7 @@ describe('filter', function () {
   });
 
   it('returns callback value from second filter', function () {
-    var it = iterator([function (next) {
+    var it = fnIterator([function (next) {
       next();
     }, function (next, callback) {
       next(function () {
@@ -251,7 +257,7 @@ describe('filter', function () {
   });
 
   it('uses 4th argument as callback if 3rd is null', function () {
-    var it = iterator([]);
+    var it = fnIterator([]);
 
     filter(it, null, null, adds(1));
 
@@ -259,7 +265,7 @@ describe('filter', function () {
   });
 
   it('invokes 2nd argument as last filter', function () {
-    var it = iterator([adds(1)]);
+    var it = fnIterator([adds(1)]);
 
     filter(it, adds(2), adds(3));
 
@@ -267,7 +273,7 @@ describe('filter', function () {
   });
 
   it('invokes 3rd argument as last filter', function () {
-    var it = iterator([adds(1)]);
+    var it = fnIterator([adds(1)]);
 
     filter(it, null, adds(2), adds(3));
 
@@ -275,7 +281,7 @@ describe('filter', function () {
   });
 
   it('invokes 3rd argument with correct scope', function (done) {
-    var it = iterator([]);
+    var it = fnIterator([]);
     var scope = {};
 
     filter(it, scope, function () {
@@ -284,7 +290,7 @@ describe('filter', function () {
   });
 
   it('does not invoke done if 2nd agument expects callback', function () {
-    var it = iterator([]);
+    var it = fnIterator([]);
 
     filter(it, function (callback) {
       /*jslint unparam: true*/
@@ -295,7 +301,7 @@ describe('filter', function () {
   });
 
   it('passes done function to 2nd argument', function () {
-    var it = iterator([]);
+    var it = fnIterator([]);
     var done = adds(0);
 
     var cb;
@@ -307,7 +313,7 @@ describe('filter', function () {
   });
 
   it('passes done function to 3rd argument with correct scope', function () {
-    var it = iterator([]);
+    var it = fnIterator([]);
     var done = adds(0);
     var scope = {};
 
@@ -323,7 +329,7 @@ describe('filter', function () {
   });
 
   it('invokes callback with error from additional filter', function () {
-    var it = iterator([]);
+    var it = fnIterator([]);
     var e = new Error();
 
     var error;
@@ -334,6 +340,35 @@ describe('filter', function () {
     });
 
     assert.strictEqual(error, e);
+  });
+
+  it('invokes callback with configured scope (no params)', function () {
+    var scope;
+    var it = iterator([{
+      scope: { is : 42 },
+      fn: function () {
+        scope = this;
+      }
+    }]);
+
+    filter(it);
+
+    assert.deepEqual(scope, { is : 42 });
+  });
+
+  it('invokes callback with configured scope (next param)', function () {
+    var scope;
+    var it = iterator([{
+      scope: { is : 42 },
+      fn: function (next) {
+        scope = this;
+        next();
+      }
+    }]);
+
+    filter(it);
+
+    assert.deepEqual(scope, { is : 42 });
   });
 
 });
