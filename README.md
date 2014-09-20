@@ -1,10 +1,10 @@
-# min-filter.js [![Build Status](https://travis-ci.org/mantoni/min-filter.js.png?branch=master)](https://travis-ci.org/mantoni/min-filter.js)
+# min-filter.js
+
+[![Build Status]](https://travis-ci.org/mantoni/min-filter.js)
+[![SemVer]](http://semver.org)
+[![License]](https://github.com/mantoni/min-filter.js/blob/master/LICENSE)
 
 Minimal filter chain for Node.js and the browser
-
-Repository: <https://github.com/mantoni/min-filter.js>
-
----
 
 ## Install with npm
 
@@ -72,5 +72,8 @@ To use this module in a browser, download the npm package and then use
 
 MIT
 
+[Build Status]: http://img.shields.io/travis/mantoni/min-filter.js.svg
+[SemVer]: http://img.shields.io/:semver-%E2%9C%93-brightgreen.svg
+[License]: http://img.shields.io/npm/l/min-filter.svg
 [min-iterator]: https://github.com/mantoni/min-iterator.js
 [live-list]: https://github.com/mantoni/live-list.js
