@@ -1,6 +1,6 @@
 {
   "name"            : "min-filter",
-  "version"         : "0.2.0",
+  "version"         : "1.0.0",
   "description"     : "Minimal filter chain for Node.js and the browser",
   "keywords"        : ["filter", "chain", "iterator", "node", "browser"],
   "author"          : "Maximilian Antoni (http://maxantoni.de)",
